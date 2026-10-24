@@ -28,6 +28,12 @@ def defang(value: str) -> str:
         value = "hxxps://" + value[8:]
     elif value[:7].lower() == "http://":
         value = "hxxp://" + value[7:]
+    else:
+        # A javascript: or data: string is still pasteable if the colon stays.
+        for scheme in ("javascript:", "vbscript:", "data:", "file:"):
+            if value.lower().startswith(scheme):
+                value = value[: len(scheme) - 1] + "[colon]" + value[len(scheme) :]
+                break
     return value.replace(".", "[.]")
 
 
@@ -65,10 +71,13 @@ def normalize_url(raw: str, source: str) -> NormalizedUrl | None:
     if scheme_match and scheme_match.group(1).lower() in _DANGEROUS_SCHEMES:
         scheme = scheme_match.group(1).lower()
         normalized = cleaned[:2048]
+        # Trailing punctuation is stripped from the normalized form. The defanged
+        # display keeps the original characters, with the scheme colon broken.
+        display_source = safe_original if safe_original.lower().startswith(scheme + ":") else normalized
         return NormalizedUrl(
             original=safe_original,
             normalized=normalized,
-            defanged=defang(normalized)[:2048],
+            defanged=defang(display_source)[:2048],
             scheme=scheme,
             host=None,
             is_ip_literal=False,

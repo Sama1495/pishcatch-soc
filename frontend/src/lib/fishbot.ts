@@ -31,7 +31,7 @@ export function labelName(label: RiskLabel): string {
 
 /** Chat lines built only from our labels, rule titles, and policy text. */
 export function fishbotBubbles(detail: IncidentDetail): string[] {
-  const confidence = `I'm ${detail.confidence.score}% sure of my own verdict. That is how strongly these checks agree, not a measured accuracy.`;
+  const confidence = `Confidence index ${detail.confidence.score} (${detail.confidence.band}). It says how strongly this ruleset supports its own verdict. It is not a measured accuracy.`;
   if (detail.explainer_status === "validated" && detail.ai_summary) {
     return [
       detail.ai_summary,
@@ -78,7 +78,7 @@ export function askFishbot(question: string, detail: IncidentDetail): string {
     const parts = detail.confidence.components.map(
       (item) => `${item.label} ${item.score} (weight ${item.weight})`,
     );
-    return `${detail.confidence.score}% ${detail.confidence.band}. ${parts.join("; ")}. ${detail.confidence.disclaimer}`;
+    return `Confidence index ${detail.confidence.score} (${detail.confidence.band}). ${parts.join("; ")}. ${detail.confidence.disclaimer}`;
   }
   if (/\b(url|link|domain|host)\b/.test(q)) {
     const urls = detail.urls.map((url) => url.defanged).slice(0, 8);

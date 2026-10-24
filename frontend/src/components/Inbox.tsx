@@ -89,7 +89,7 @@ export function Inbox() {
                 <RiskBadge label={item.risk_label} />
                 <span className="inbox-subject">{item.subject || item.filename}</span>
                 <span className="muted">
-                  {item.confidence_score}% · {item.case_status.replaceAll("_", " ")}
+                  index {item.confidence_score} · {item.case_status.replaceAll("_", " ")}
                 </span>
               </button>
             </li>

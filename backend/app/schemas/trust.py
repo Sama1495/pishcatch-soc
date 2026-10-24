@@ -96,6 +96,8 @@ class MetricsOut(BaseModel):
     case_count: int
     cases_by_label: dict[str, int]
     average_processing_time_ms: float | None
+    completed_human_reviews: int = 0
+    average_human_review_ms: float | None = None
     agreements: int
     disagreements: int
     feedback_total: int

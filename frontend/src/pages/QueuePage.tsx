@@ -82,7 +82,11 @@ export function QueuePage() {
             </button>
           ))}
         </div>
-        <p className="muted">The first samples are real public-corpus mail. Do not open their links.</p>
+        <p className="muted">
+          {buttons.some((name) => name.startsWith("corpus_"))
+            ? "The corpus buttons are real public-corpus mail. Do not open their links."
+            : "Corpus buttons are hidden until those files are on disk. The buttons above are synthetic samples. Do not open their links."}
+        </p>
       </section>
 
       <section className="metrics" aria-label="Measured evaluation">
@@ -126,6 +130,12 @@ export function QueuePage() {
           </p>
           <p className="metric-note">
             Local average of stored cases. Automated steps: parse, rules, correlation, brief, and policy.
+          </p>
+          <p className="metric-note">
+            Human review wall time (analysis finished to decision, including queue wait):{" "}
+            {metrics?.completed_human_reviews
+              ? `${metrics.average_human_review_ms} ms across ${metrics.completed_human_reviews} decisions`
+              : "No completed decision yet. This is not a time-saved claim."}
           </p>
           <label className="manual">
             Minutes this takes you by hand (optional)

@@ -205,6 +205,8 @@ export interface Metrics {
   case_count: number;
   cases_by_label: Record<RiskLabel, number>;
   average_processing_time_ms: number | null;
+  completed_human_reviews: number;
+  average_human_review_ms: number | null;
   agreements: number;
   disagreements: number;
   feedback_total: number;

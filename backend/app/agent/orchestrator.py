@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from app.agent.tools import ALLOWED_TOOLS
 from app.core.errors import AppError
 from app.core.logging import get_logger
-from app.core.time import utcnow
+from app.core.time import ensure_utc, utcnow
 from app.db.models import (
     ActionResponseRow,
     AuditEventRow,
@@ -539,7 +539,6 @@ class TriageOrchestrator:
             },
         )
         session.add(decision)
-        session.add(audit)
         _note_human(
             session,
             incident.id,
@@ -558,12 +557,16 @@ class TriageOrchestrator:
             "done",
             {"component": "analyst", "closed_by": action, "analyst_id": decision.analyst_id},
         )
+        review_ms = _human_review_ms(session, incident.id)
+        audit.detail_json = {**audit.detail_json, "human_review_ms": review_ms}
+        session.add(audit)
         session.commit()
         logger.info(
-            "analyst_decision incident_id=%s action=%s actor=%s",
+            "analyst_decision incident_id=%s action=%s actor=%s human_review_ms=%s",
             incident.id,
             action,
             decision.analyst_id,
+            review_ms,
         )
         return AnalystDecision(
             id=decision.id,
@@ -579,26 +582,74 @@ class TriageOrchestrator:
     def simulate_quarantine(
         self, session: Session, incident_id: str, payload: QuarantineRequest
     ) -> QuarantineResult:
-        """Record a quarantine mark. This method has no mail-system client."""
+        """Record a quarantine mark only when that action was offered.
+
+        This method has no mail-system client. A request for any other action
+        is refused and the refusal is audited. The analyst id is a label, not
+        an authenticated identity.
+        """
         _check_analyst(payload.analyst_id)
         incident = session.get(Incident, incident_id)
         if incident is None:
             raise AppError("incident_not_found", "The incident was not found.", 404)
+        actor = payload.analyst_id.strip()
+        offered = str((incident.policy_json or {}).get("offered_action") or "")
+        if incident.case_status == "quarantine_simulated":
+            raise AppError(
+                "already_recorded",
+                "Quarantine was already simulated for this incident.",
+                409,
+            )
+        if offered != "simulate_quarantine":
+            _deny_action(session, incident, actor, "action_not_offered", offered)
+            raise AppError(
+                "action_not_authorized",
+                "Quarantine was not the action offered for this case. Nothing was changed.",
+                403,
+            )
+        existing = session.scalar(
+            select(ActionResponseRow).where(ActionResponseRow.incident_id == incident.id)
+        )
+        if existing is not None and existing.decision == "reject":
+            _deny_action(session, incident, actor, "human_rejected", offered)
+            raise AppError(
+                "action_not_authorized",
+                "The offered action was rejected. Nothing was changed.",
+                403,
+            )
+        if existing is not None:
+            raise AppError(
+                "already_recorded",
+                "An action response is already recorded for this incident.",
+                409,
+            )
         incident.case_status = "quarantine_simulated"
+        response = ActionResponseRow(
+            id=str(uuid.uuid4()),
+            incident_id=incident.id,
+            decision="approve",
+            offered_action=offered,
+            reason=payload.reason.strip(),
+            analyst_id=actor,
+            created_at=utcnow(),
+        )
+        session.add(response)
         audit = AuditEventRow(
             id=str(uuid.uuid4()),
             incident_id=incident.id,
             event_type="quarantine_simulated",
-            actor=payload.analyst_id.strip(),
-            created_at=utcnow(),
+            actor=actor,
+            created_at=response.created_at,
             detail_json={
                 "simulated": True,
                 "external_effect": "none",
                 "reason_recorded": True,
+                "authorization": "human_request_for_offered_action",
+                "offered_action": offered,
+                "response_id": response.id,
             },
         )
         session.add(audit)
-        actor = payload.analyst_id.strip()
         complete_step(
             session,
             incident.id,
@@ -618,11 +669,14 @@ class TriageOrchestrator:
             "done",
             {"component": "quarantine_simulator", "closed_by": "simulate_quarantine", "analyst_id": actor},
         )
+        review_ms = _human_review_ms(session, incident.id)
+        audit.detail_json = {**audit.detail_json, "human_review_ms": review_ms}
         session.commit()
         logger.info(
-            "quarantine_simulated incident_id=%s actor=%s external_effect=none",
+            "quarantine_simulated incident_id=%s actor=%s external_effect=none human_review_ms=%s",
             incident.id,
-            payload.analyst_id.strip(),
+            actor,
+            review_ms,
         )
         return QuarantineResult(
             incident_id=incident.id,
@@ -686,7 +740,6 @@ class TriageOrchestrator:
             },
         )
         session.add(row)
-        session.add(audit)
         _note_human(
             session,
             incident.id,
@@ -698,12 +751,16 @@ class TriageOrchestrator:
                 "rules_updated": False,
             },
         )
+        review_ms = _human_review_ms(session, incident.id, step_id="human_decision")
+        audit.detail_json = {**audit.detail_json, "human_review_ms": review_ms}
+        session.add(audit)
         session.commit()
         logger.info(
-            "verdict_feedback incident_id=%s verdict=%s actor=%s rules_updated=false",
+            "verdict_feedback incident_id=%s verdict=%s actor=%s rules_updated=false human_review_ms=%s",
             incident.id,
             verdict,
             actor,
+            review_ms,
         )
         return VerdictFeedbackOut(
             id=row.id,
@@ -793,7 +850,6 @@ class TriageOrchestrator:
             },
         )
         session.add(row)
-        session.add(audit)
         complete_step(
             session,
             incident.id,
@@ -817,13 +873,21 @@ class TriageOrchestrator:
                 "analyst_id": actor,
             },
         )
+        review_ms = _human_review_ms(session, incident.id)
+        audit.detail_json = {
+            **audit.detail_json,
+            "authorization": "human_decision",
+            "human_review_ms": review_ms,
+        }
+        session.add(audit)
         session.commit()
         logger.info(
-            "action_response incident_id=%s decision=%s offered_action=%s actor=%s external_effect=none",
+            "action_response incident_id=%s decision=%s offered_action=%s actor=%s external_effect=none human_review_ms=%s",
             incident.id,
             decision,
             offered,
             actor,
+            review_ms,
         )
         return ActionResponseOut(
             id=row.id,
@@ -843,6 +907,53 @@ class TriageOrchestrator:
 def _check_analyst(analyst_id: str) -> None:
     if not _ANALYST_RE.fullmatch(analyst_id.strip()):
         raise AppError("invalid_decision", "analyst_id contains unsupported characters.", 422)
+
+
+def _human_review_ms(session: Session, incident_id: str, step_id: str = "awaiting_human_decision") -> int | None:
+    """Wall time from analysis completion until the step was closed.
+
+    The step starts when analysis finishes, so the value includes queue wait.
+    It is not a stopwatch of active reading and it is not a time-saved claim.
+    """
+    row = session.scalar(
+        select(OperationStepRow).where(
+            OperationStepRow.incident_id == incident_id,
+            OperationStepRow.step_id == step_id,
+        )
+    )
+    if row is None:
+        return None
+    if row.finished_at is not None:
+        return int(row.duration_ms)
+    started = ensure_utc(row.started_at)
+    return max(0, int((utcnow() - started).total_seconds() * 1000))
+
+
+def _deny_action(session: Session, incident: Incident, actor: str, reason_code: str, offered: str) -> None:
+    session.add(
+        AuditEventRow(
+            id=str(uuid.uuid4()),
+            incident_id=incident.id,
+            event_type="action_denied",
+            actor=actor,
+            created_at=utcnow(),
+            detail_json={
+                "requested_action": "simulate_quarantine",
+                "offered_action": offered,
+                "reason_code": reason_code,
+                "external_effect": "none",
+                "case_status": incident.case_status,
+            },
+        )
+    )
+    session.commit()
+    logger.info(
+        "action_denied incident_id=%s reason_code=%s offered_action=%s actor=%s external_effect=none",
+        incident.id,
+        reason_code,
+        offered,
+        actor,
+    )
 
 
 def _note_human(session: Session, incident_id: str, provenance: dict) -> None:
