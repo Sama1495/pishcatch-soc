@@ -108,6 +108,9 @@ def detail_from_incident(incident: Incident) -> IncidentDetail:
 
 
 def summary_from_incident(incident: Incident) -> IncidentSummary:
+    headers = incident.headers_json or {}
+    verdicts = list(incident.verdict_feedback or [])
+    actions = list(incident.action_responses or [])
     return IncidentSummary(
         incident_id=incident.id,
         created_at=ensure_utc(incident.created_at),
@@ -127,6 +130,15 @@ def summary_from_incident(incident: Incident) -> IncidentSummary:
         confidence_band=_band(incident.confidence_band),
         offered_action=(incident.policy_json or {}).get("offered_action"),
         autonomy=(incident.policy_json or {}).get("autonomy"),
+        sender_domain=incident.sender_domain,
+        url_count=len(incident.urls_json or []),
+        attachment_count=len(incident.attachments_json or []),
+        auth_trust=headers.get("auth_trust"),
+        spf=incident.spf_result,
+        dkim=incident.dkim_result,
+        dmarc=incident.dmarc_result,
+        verdict=verdicts[-1].verdict if verdicts else None,
+        action_decision=actions[-1].decision if actions else None,
     )
 
 

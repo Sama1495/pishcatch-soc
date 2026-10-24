@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, File, Query, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from sqlalchemy.orm import Session
 
 from app.agent.orchestrator import TriageOrchestrator
@@ -24,6 +24,7 @@ from app.schemas.decision import AnalystDecision, DecisionCreate, QuarantineRequ
 from app.schemas.trust import ActionResponseCreate, ActionResponseOut, MetricsOut, VerdictFeedbackCreate, VerdictFeedbackOut
 from app.services.confidence import DISCLAIMER, shrunk_agreement_percent
 from app.services.present import detail_from_incident, summary_from_incident
+from app.services.report import build_docx, build_xlsx, case_code, is_decided
 from app.services.rules import RULESET_VERSION
 
 router = APIRouter(prefix="/api/v1", tags=["incidents"])
@@ -189,6 +190,43 @@ def metrics(db: Session = Depends(get_db)) -> MetricsOut:
         ),
         disclaimer=_METRICS_NOTE,
         **snapshot,
+    )
+
+
+def _decided_incident(incident_id: str, db: Session):
+    incident = get_incident(db, incident_id)
+    if incident is None:
+        raise AppError("incident_not_found", "The incident was not found.", 404)
+    if not is_decided(incident):
+        raise AppError(
+            "report_not_ready",
+            "Record a yes/no or a correct/wrong verdict before downloading the report.",
+            409,
+        )
+    return incident
+
+
+@router.get("/incidents/{incident_id}/report.docx")
+def download_docx(incident_id: str, db: Session = Depends(get_db)) -> Response:
+    incident = _decided_incident(incident_id, db)
+    payload = build_docx(incident)
+    name = f"{case_code(incident.id)}-incident-report.docx"
+    return Response(
+        content=payload,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": f'attachment; filename="{name}"'},
+    )
+
+
+@router.get("/incidents/{incident_id}/report.xlsx")
+def download_xlsx(incident_id: str, db: Session = Depends(get_db)) -> Response:
+    incident = _decided_incident(incident_id, db)
+    payload = build_xlsx(incident)
+    name = f"{case_code(incident.id)}-incident-report.xlsx"
+    return Response(
+        content=payload,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{name}"'},
     )
 
 

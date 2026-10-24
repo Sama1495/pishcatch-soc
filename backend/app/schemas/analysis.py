@@ -85,6 +85,15 @@ class IncidentSummary(BaseModel):
     confidence_band: ConfidenceBand = "low"
     offered_action: str | None = None
     autonomy: str | None = None
+    sender_domain: str | None = None
+    url_count: int = 0
+    attachment_count: int = 0
+    auth_trust: str | None = None
+    spf: str | None = None
+    dkim: str | None = None
+    dmarc: str | None = None
+    verdict: str | None = None
+    action_decision: str | None = None
 
 
 class IncidentList(BaseModel):

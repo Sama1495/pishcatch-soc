@@ -52,7 +52,8 @@ Tagline: Catch the threat. Explain the risk. Guide the response.
 - SQLite history, `GET` list and detail, analyst confirm/correct, simulated quarantine
 - Agent confidence (separate from the risk score), an operations timeline, and a trust policy that never auto-executes
 - Human yes/no on the offered action, plus “agent was correct / agent was wrong”
-- React dashboard: queue, FishBot, timeline, confidence, and the decision controls
+- After that decision, `GET /api/v1/incidents/{id}/report.docx` and `report.xlsx` download a defanged SOC report
+- React dashboard: Kanban queue, FishBot, timeline, confidence, and the decision controls
 - `pytest` for validation, parsing, rules, confidence, policy, the timeline, and the human loop
 
 Live reputation and a live model stay off. See `docs/architecture.md`,

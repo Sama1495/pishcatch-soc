@@ -7,4 +7,5 @@ def test_health(client):
     assert body["engine"] == "deterministic"
     assert body["reputation_enabled"] is False
     assert body["ai_enabled"] is False
+    assert body["explainer_provider"] == "off"
     assert "api_key" not in response.text.lower()

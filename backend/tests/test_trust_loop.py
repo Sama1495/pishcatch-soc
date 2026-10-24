@@ -90,6 +90,10 @@ def test_verdict_and_action_are_audited_and_do_not_change_rules(client, caplog):
     assert wrong.status_code == 200, wrong.text
     assert wrong.json()["rules_updated"] is False
     assert wrong.json()["verdict"] == "wrong"
+    queued = client.get("/api/v1/incidents?limit=200").json()["items"]
+    queued_row = next(item for item in queued if item["incident_id"] == incident_id)
+    assert queued_row["verdict"] == "wrong"
+    assert queued_row["action_decision"] is None
 
     detail = client.get(f"/api/v1/incidents/{incident_id}").json()
     assert detail["risk_label"] == "likely_malicious"
@@ -118,6 +122,10 @@ def test_verdict_and_action_are_audited_and_do_not_change_rules(client, caplog):
     assert approved.json()["case_status"] == "quarantine_simulated"
     final = client.get(f"/api/v1/incidents/{incident_id}").json()
     assert final["case_status"] == "quarantine_simulated"
+    after_action = client.get("/api/v1/incidents?limit=200").json()["items"]
+    decided = next(item for item in after_action if item["incident_id"] == incident_id)
+    assert decided["action_decision"] == "approve"
+    assert decided["verdict"] == "wrong"
     assert _step(final, "simulated_action")["status"] == "done"
     assert _step(final, "awaiting_human_decision")["status"] == "done"
     action_audit = next(event for event in final["audit_events"] if event["event_type"] == "action_response")

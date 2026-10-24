@@ -62,9 +62,16 @@ def test_end_to_end_phishing_flow(client, caplog):
     assert listed.status_code == 200
     queue = listed.json()
     assert queue["total"] == 1
-    assert queue["items"][0]["incident_id"] == body["incident_id"]
-    assert "body_text" not in queue["items"][0]
-    assert "body_excerpt" not in queue["items"][0]
+    item = queue["items"][0]
+    assert item["incident_id"] == body["incident_id"]
+    assert "body_text" not in item
+    assert "body_excerpt" not in item
+    assert item["url_count"] >= 1
+    assert item["attachment_count"] >= 1
+    assert item["auth_trust"] in {"absent", "untrusted", "trusted"}
+    assert item["sender_domain"]
+    assert item["verdict"] is None
+    assert item["action_decision"] is None
 
     detail = client.get(f"/api/v1/incidents/{body['incident_id']}")
     assert detail.status_code == 200

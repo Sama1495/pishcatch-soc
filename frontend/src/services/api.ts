@@ -52,6 +52,7 @@ export function getHealth(): Promise<HealthResponse> {
 
 export function listIncidents(filters: QueueFilters = {}): Promise<IncidentList> {
   const params = new URLSearchParams();
+  params.set("limit", "200");
   if (filters.risk_label) params.set("risk_label", filters.risk_label);
   if (filters.confidence_band) params.set("confidence_band", filters.confidence_band);
   const query = params.toString();

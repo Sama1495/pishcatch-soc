@@ -1,6 +1,8 @@
 import json
+import os
 
 import httpx
+from fastapi.testclient import TestClient
 
 from app.integrations.explainer import AiExplainer
 from app.integrations.gemini import GeminiExplainer, reset_gemini_state
@@ -147,3 +149,49 @@ def test_provider_switch_reads_key_only_from_env(monkeypatch):
     assert missing.provider == "unconfigured"
     assert missing.explain(["spf_fail"], ["SPF failed"], "suspicious").status == "unconfigured"
     get_settings.cache_clear()
+
+
+def test_root_dotenv_enables_gemini_without_overriding_the_environment(tmp_path, monkeypatch):
+    """A repo-root .env is enough. A variable already in the process wins."""
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "AI_EXPLAINER_PROVIDER=gemini\nGEMINI_API_KEY=dotenv-secret-key\nGEMINI_MODEL=gemini-2.5-flash\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr("app.core.config._discover_env_file", lambda: str(env_file))
+    monkeypatch.setenv("GEMINI_API_KEY", "already-set")
+    monkeypatch.delenv("AI_EXPLAINER_PROVIDER", raising=False)
+    monkeypatch.delenv("PHISHCATCH_AI_EXPLAINER_PROVIDER", raising=False)
+    monkeypatch.delenv("GEMINI_MODEL", raising=False)
+    from app.core.config import get_settings
+    from app.integrations.gemini import gemini_api_key
+
+    get_settings.cache_clear()
+    try:
+        assert gemini_api_key() == "already-set"
+        monkeypatch.delenv("GEMINI_API_KEY")
+        get_settings.cache_clear()
+        live = AiExplainer.from_settings()
+        assert live.provider == "gemini"
+        assert live.api_key == ""
+        assert gemini_api_key() == "dotenv-secret-key"
+        assert "dotenv-secret-key" not in repr(live.__dict__)
+
+        from app.db.session import reset_db_state
+        from app.main import create_app
+
+        monkeypatch.setenv("PHISHCATCH_DATABASE_URL", f"sqlite:///{tmp_path / 'phishcatch.db'}")
+        monkeypatch.setenv("PHISHCATCH_REPUTATION_ENABLED", "false")
+        monkeypatch.setenv("PHISHCATCH_AI_ENABLED", "false")
+        get_settings.cache_clear()
+        reset_db_state()
+        with TestClient(create_app()) as client:
+            response = client.get("/health")
+        assert response.status_code == 200
+        assert response.json()["explainer_provider"] == "gemini"
+        assert "dotenv-secret-key" not in response.text
+        assert "api_key" not in response.text.lower()
+    finally:
+        os.environ.pop("AI_EXPLAINER_PROVIDER", None)
+        os.environ.pop("GEMINI_MODEL", None)
+        get_settings.cache_clear()

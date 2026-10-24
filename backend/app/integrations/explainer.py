@@ -55,6 +55,9 @@ class AiExplainer:
 
     @classmethod
     def from_settings(cls, settings: Settings | None = None) -> "AiExplainer":
+        from app.core.config import load_unprefixed_env
+
+        load_unprefixed_env()
         settings = settings or get_settings()
         provider = (
             os.environ.get("AI_EXPLAINER_PROVIDER")

@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import { FishBot } from "./components/FishBot";
-import { Inbox } from "./components/Inbox";
 import { ToastProvider } from "./components/Toasts";
 import { UploadProvider, useUpload } from "./components/UploadContext";
-import { IncidentPage } from "./pages/IncidentPage";
 import { QueuePage } from "./pages/QueuePage";
 import { AnalystContext, analystId, useAnalyst } from "./lib/analyst";
 import { getHealth } from "./services/api";
@@ -41,7 +39,7 @@ function Shell() {
               <em>FishBot</em>
             </span>
           </Link>
-          <p className="keys">j/k move · Enter open · y yes · n no · c correct · w wrong</p>
+          <p className="keys">j/k move · Enter open · y yes · n no · esc close</p>
           <label className="analyst">
             Analyst
             <input
@@ -57,11 +55,10 @@ function Shell() {
           <span className={health.startsWith("api") && health !== "api down" ? "health ok" : "health"}>{health}</span>
         </header>
         <div className="workspace">
-          <Inbox />
           <div className="stage">
             <Routes>
               <Route path="/" element={<QueuePage />} />
-              <Route path="/incidents/:incidentId" element={<IncidentPage />} />
+              <Route path="/incidents/:incidentId" element={<QueuePage />} />
             </Routes>
           </div>
         </div>

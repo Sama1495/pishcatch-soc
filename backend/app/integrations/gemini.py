@@ -46,10 +46,16 @@ def reset_gemini_state() -> None:
 
 
 def gemini_api_key() -> str:
+    from app.core.config import load_unprefixed_env
+
+    load_unprefixed_env()
     return os.environ.get("GEMINI_API_KEY", "").strip()
 
 
 def gemini_model() -> str:
+    from app.core.config import load_unprefixed_env
+
+    load_unprefixed_env()
     raw = os.environ.get("GEMINI_MODEL", "").strip() or _DEFAULT_MODEL
     if not _MODEL_RE.fullmatch(raw):
         return _DEFAULT_MODEL

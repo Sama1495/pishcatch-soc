@@ -100,6 +100,29 @@ export interface IncidentSummary {
   confidence_band: ConfidenceBand;
   offered_action: string | null;
   autonomy: string | null;
+  sender_domain: string | null;
+  url_count: number;
+  attachment_count: number;
+  auth_trust: string | null;
+  spf: string | null;
+  dkim: string | null;
+  dmarc: string | null;
+  verdict: string | null;
+  action_decision: string | null;
+}
+
+export interface KeyHeaders {
+  from_header: string | null;
+  to: string[];
+  cc: string[];
+  reply_to: string | null;
+  return_path: string | null;
+  subject: string | null;
+  date: string | null;
+  message_id: string | null;
+  authentication_results: string[];
+  received_spf: string | null;
+  auth_trust: string | null;
 }
 
 export interface IncidentList {
@@ -172,10 +195,12 @@ export interface IncidentDetail {
   filename: string;
   sender: string | null;
   sender_address: string | null;
+  sender_domain: string | null;
   subject: string | null;
   spf: string | null;
   dkim: string | null;
   dmarc: string | null;
+  headers: KeyHeaders;
   body_text: string;
   body_excerpt: string;
   urls: UrlOut[];
@@ -198,6 +223,20 @@ export interface IncidentDetail {
   brief: IncidentBrief;
   verdict_feedback: VerdictFeedback[];
   action_response: ActionResponse | null;
+  decisions: Array<{
+    id: string;
+    action: string;
+    previous_label: RiskLabel;
+    corrected_label: RiskLabel | null;
+    analyst_id: string;
+    created_at: string;
+  }>;
+  audit_events: Array<{
+    id: string;
+    event_type: string;
+    actor: string;
+    created_at: string;
+  }>;
 }
 
 export interface Metrics {
