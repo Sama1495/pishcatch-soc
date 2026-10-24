@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-10-24T18:20:26+00:00",
-  "ruleset": "1.1.0",
-  "selection": "First 200 messages in mailbox order from nazario-phishing-2023; first 200 easy_ham files and first 100 hard_ham files by sorted path. Not a random sample and not tuned after looking at errors.",
+  "generated_at": "2026-10-24T20:20:57+00:00",
+  "ruleset": "1.2.0",
+  "selection": "First 200 messages in mailbox order from nazario-phishing-2023; first 200 easy_ham files and first 100 hard_ham files by sorted path. Not a random sample. Ruleset 1.2.0 phrase gates were chosen on a 70 percent tune split of the full phishing mailbox and every easy_ham file, then measured once on the held-out 30 percent. This 500-message slice overlaps that split and was not the decision metric.",
   "datasets": [
     {
       "name": "Jose Nazario phishing corpus",
@@ -34,17 +34,17 @@
   ],
   "rates": {
     "tp": 113,
-    "fp": 44,
+    "fp": 42,
     "fn": 0,
     "tn": 0,
     "phishing_inconclusive": 87,
-    "ham_inconclusive": 256,
+    "ham_inconclusive": 258,
     "tpr": 0.565,
     "fnr": 0.0,
-    "fpr": 0.14666666666666667,
+    "fpr": 0.14,
     "tnr": 0.0,
     "inconclusive_rate_phishing": 0.435,
-    "inconclusive_rate_ham": 0.8533333333333334,
+    "inconclusive_rate_ham": 0.86,
     "phishing_scored": 200,
     "phishing_attempted": 200,
     "ham_scored": 300,
@@ -52,8 +52,8 @@
   },
   "failures_handled": 0,
   "latency_ms": {
-    "p50": 5.446,
-    "p95": 31.113,
+    "p50": 5.052,
+    "p95": 29.168,
     "n": 500
   },
   "slices": {
@@ -78,9 +78,9 @@
       "failure_codes": {},
       "labels": {
         "likely_malicious": 0,
-        "suspicious": 8,
+        "suspicious": 7,
         "likely_benign": 0,
-        "inconclusive": 192
+        "inconclusive": 193
       }
     },
     "hard_ham": {
@@ -91,9 +91,9 @@
       "failure_codes": {},
       "labels": {
         "likely_malicious": 3,
-        "suspicious": 33,
+        "suspicious": 32,
         "likely_benign": 0,
-        "inconclusive": 64
+        "inconclusive": 65
       }
     }
   },

@@ -162,7 +162,10 @@ def run() -> dict:
         "selection": (
             f"First {PHISH_LIMIT} messages in mailbox order from nazario-phishing-2023; "
             f"first {EASY_LIMIT} easy_ham files and first {HARD_LIMIT} hard_ham files by sorted path. "
-            "Not a random sample and not tuned after looking at errors."
+            "Not a random sample. Ruleset 1.2.0 phrase gates were chosen on a 70 percent "
+            "tune split of the full phishing mailbox and every easy_ham file, then measured "
+            "once on the held-out 30 percent. This 500-message slice overlaps that split "
+            "and was not the decision metric."
         ),
         "datasets": [
             {

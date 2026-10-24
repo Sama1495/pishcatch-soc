@@ -2,7 +2,7 @@ Return-Path: <bounce-learning@bounce.linkedin.com>
 From: "LinkedIn Learning" <learning-noreply@linkedin.com>
 Reply-To: learning-noreply@linkedin.com
 To: "Daniel Ortiz" <daniel.ortiz@alaris-demo.example>
-Subject: Tu certificado de finalizacion ya esta disponible
+Subject: Your certificate of completion is ready
 Date: Wed, 14 Oct 2026 10:03:10 -0600
 Message-ID: <cert-benign-demo-001@linkedin.com>
 Received: from mailout.linkedin.com (mailout.linkedin.com [192.0.2.25]) by mx.alaris-demo.example with ESMTPS id ok01 for <daniel.ortiz@alaris-demo.example>; Wed, 14 Oct 2026 16:03:12 +0000
@@ -15,30 +15,30 @@ Content-Type: multipart/alternative; boundary="pc-cert-ok"
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Hola Daniel,
+Hello Daniel,
 
-Completaste el curso "Fundamentos de MLOps" en LinkedIn Learning. Tu certificado de
-finalizacion ya esta en tu perfil, en la seccion Licencias y certificaciones.
+You finished the course "MLOps fundamentals" on LinkedIn Learning. Your certificate of
+completion is now on your profile, under Licenses and certificates.
 
-No necesitas hacer nada mas. Si quieres verlo, abre la app de LinkedIn o escribe
-linkedin.com en tu navegador y entra a Mi aprendizaje > Historial.
+You do not need to do anything else. If you want to see it, open the LinkedIn app or type
+linkedin.com in your browser and go to My Learning, then History.
 
-LinkedIn nunca te pedira pagos ni tu contrasena por correo para mantener un certificado.
+LinkedIn will never ask you for a payment or your password by email in order to keep a certificate.
 
-Equipo de LinkedIn Learning
+LinkedIn Learning team
 
 --pc-cert-ok
 Content-Type: text/html; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 <html><body>
-<p>Hola Daniel,</p>
-<p>Completaste el curso <b>Fundamentos de MLOps</b> en LinkedIn Learning. Tu certificado de finalizacion
-ya esta en tu perfil, en la seccion Licencias y certificaciones.</p>
-<p>No necesitas hacer nada mas. Si quieres verlo, entra a
+<p>Hello Daniel,</p>
+<p>You finished the course <b>MLOps fundamentals</b> on LinkedIn Learning. Your certificate of completion
+is now on your profile, under Licenses and certificates.</p>
+<p>You do not need to do anything else. If you want to see it, open
 <a href="https://www.linkedin.com/learning/me/history">https://www.linkedin.com/learning/me/history</a>.</p>
-<p>LinkedIn nunca te pedira pagos ni tu contrasena por correo para mantener un certificado.</p>
-<p>Equipo de LinkedIn Learning</p>
+<p>LinkedIn will never ask you for a payment or your password by email in order to keep a certificate.</p>
+<p>LinkedIn Learning team</p>
 </body></html>
 
 --pc-cert-ok--

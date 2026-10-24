@@ -27,7 +27,7 @@ in this order:
 
 1. Parse the `.eml` (headers, text, URL strings, attachment metadata).
 2. Normalize indicators. URL display values are defanged.
-3. Evaluate the deterministic ruleset (`backend/app/services/rules.py`, version 1.1.0).
+3. Evaluate the deterministic ruleset (`backend/app/services/rules.py`, version 1.2.0).
 4. Ask the reputation adapter. With the default settings it records `disabled` and sends nothing.
 5. Compare indicators with cases already in SQLite.
 6. Classify: `likely_malicious`, `suspicious`, `likely_benign`, or `inconclusive`.
@@ -53,6 +53,15 @@ Score = sum of unique suspicious rule weights, capped at 100. Thresholds live in
 
 A message with no signals is not declared safe. `likely_benign` is also not a clearance:
 the caveat says the absence of detections is not proof of safety.
+
+## Ruleset 1.2.0
+
+Version 1.2.0 keeps the 1.1.0 phrase lists, including the Spanish ones, and
+tightens three pretext gates. A bare `usd` amount is not a payment request.
+A certification or badge word fires only together with a sign-in, payment, or
+claim phrase, and only when From is not an issuer. Brand alignment uses that
+same call to act, so the certification word alone is not one. Weights are
+unchanged. See `docs/evaluation.md`.
 
 ## Ruleset 1.1.0
 

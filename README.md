@@ -33,7 +33,7 @@ Google products. The demo sends only synthetic samples and public-corpus mail,
 and the explainer is asked to answer in English.
 
 AI-assisted phishing triage for a SOC analyst. The risk label comes from
-deterministic rules (ruleset 1.1.0). VirusTotal and URLhaus stay off. The
+deterministic rules (ruleset 1.2.0). VirusTotal and URLhaus stay off. The
 explainer is the deterministic template unless Gemini is configured.
 
 PhishCatch turns a suspicious message into a case file: sender, defanged URLs,

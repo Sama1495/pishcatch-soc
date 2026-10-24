@@ -8,6 +8,9 @@ from tests.paths import SAMPLES
 
 def test_clean_auth_lure_is_malicious_without_trusting_spf():
     parsed = parse_eml((SAMPLES / "certification_lure_clean_auth.eml").read_bytes())
+    assert parsed.subject == (
+        "Daniel, your AWS Certified Machine Learning badge is waiting for verification"
+    )
     assert parsed.auth_trust == "untrusted"
     assert parsed.spf is None
     hits = evaluate(parsed)
@@ -24,7 +27,11 @@ def test_clean_auth_lure_is_malicious_without_trusting_spf():
 
 
 def test_multipart_certification_lure_is_malicious():
-    hits = evaluate(parse_eml((SAMPLES / "certification_lure.eml").read_bytes()))
+    parsed = parse_eml((SAMPLES / "certification_lure.eml").read_bytes())
+    assert parsed.subject == (
+        "Daniel, action required: claim your AWS Certified Machine Learning badge within 24 hours"
+    )
+    hits = evaluate(parsed)
     ids = {hit.rule_id for hit in hits}
     assert "display_name_domain_mismatch" in ids
     assert "url_text_href_mismatch" in ids
@@ -35,12 +42,46 @@ def test_multipart_certification_lure_is_malicious():
 
 
 def test_linkedin_learning_notice_does_not_fire_payment_or_badge():
-    hits = evaluate(parse_eml((SAMPLES / "certification_benign.eml").read_bytes()))
+    parsed = parse_eml((SAMPLES / "certification_benign.eml").read_bytes())
+    assert parsed.subject == "Your certificate of completion is ready"
+    hits = evaluate(parsed)
     ids = {hit.rule_id for hit in hits}
     assert "payment_for_credential_or_job" not in ids
     assert "credential_or_sso_request" not in ids
     assert "certification_badge_lure" not in ids
     assert not any(hit.polarity == "suspicious" for hit in hits)
+
+
+def test_spanish_badge_payment_phrases_still_match():
+    from app.services.parsed import ParsedEmail
+
+    parsed = ParsedEmail(
+        sender_address="a@news.example",
+        sender_domain="news.example",
+        subject="Tu insignia",
+        body_text="Paga la tarifa de verificacion y reclama tu insignia de certificacion.",
+    )
+    hits = evaluate(parsed)
+    ids = {hit.rule_id for hit in hits}
+    assert "payment_for_credential_or_job" in ids
+    assert "certification_badge_lure" in ids
+    assert classify(hits).label == "suspicious"
+
+
+def test_currency_token_without_a_pay_request_is_not_malicious():
+    from app.services.parsed import ParsedEmail
+
+    parsed = ParsedEmail(
+        sender_address="news@newsletter.example",
+        sender_domain="newsletter.example",
+        subject="AWS certification notes",
+        body_text="The AWS certification exam listed on the site is USD 49.",
+    )
+    hits = evaluate(parsed)
+    ids = {hit.rule_id for hit in hits}
+    assert "payment_for_credential_or_job" not in ids
+    assert "certification_badge_lure" not in ids
+    assert classify(hits).label not in {"likely_malicious", "suspicious"}
 
 
 def test_mailing_list_skips_envelope_mismatches():

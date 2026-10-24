@@ -4,7 +4,7 @@ Each suspicious hit carries a stable id, a human reason, and the fields it
 looked at. The risk label is computed separately from these hits. A message
 with no hits is not a pass; the classifier treats that as inconclusive.
 
-Ruleset version: 1.1.0
+Ruleset version: 1.2.0
 """
 
 from dataclasses import dataclass
@@ -13,7 +13,7 @@ import unicodedata
 
 from app.services.parsed import ParsedEmail
 
-RULESET_VERSION = "1.1.0"
+RULESET_VERSION = "1.2.0"
 PRODUCER = "phishcatch-rules"
 
 # Edit distance and brand-affix checks compare registrable-looking labels to

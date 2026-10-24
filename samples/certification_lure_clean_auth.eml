@@ -1,8 +1,8 @@
 Return-Path: <notify@certverify-portal.test>
-From: "Programa de Credenciales Cloud" <notify@certverify-portal.test>
+From: "Cloud Credential Program" <notify@certverify-portal.test>
 Reply-To: notify@certverify-portal.test
 To: "Daniel Ortiz" <daniel.ortiz@alaris-demo.example>
-Subject: Daniel, tu insignia AWS Certified Machine Learning esta pendiente de verificacion
+Subject: Daniel, your AWS Certified Machine Learning badge is waiting for verification
 Date: Fri, 23 Oct 2026 11:40:02 -0600
 Message-ID: <cert-lure-demo-002@certverify-portal.test>
 Authentication-Results: mx.alaris-demo.example; spf=pass smtp.mailfrom=certverify-portal.test; dkim=pass header.d=certverify-portal.test; dmarc=pass header.from=certverify-portal.test
@@ -11,11 +11,11 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Hola Daniel,
+Hello Daniel,
 
-Vimos en LinkedIn que obtuviste la certificacion AWS Certified Machine Learning - Specialty.
-Para mantener tu insignia verificada, reclamala en https://certverify-portal.test/claim
-iniciando sesion con tu cuenta corporativa y pagando la tarifa de verificacion de USD 49.
-Tienes 24 horas.
+We saw on LinkedIn that you earned the AWS Certified Machine Learning - Specialty certification.
+To keep your badge verified, claim your badge at https://certverify-portal.test/claim.
+Sign in with your corporate account and pay the verification fee of USD 49.
+You must finish this within 24 hours.
 
-Programa de Credenciales Cloud
+Cloud Credential Program

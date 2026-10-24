@@ -41,7 +41,7 @@ PRETEXT_SPECS: tuple[RuleSpec, ...] = (
     RuleSpec(
         "certification_badge_lure",
         "Certification or badge claim from a non-issuer",
-        "The message talks about a badge or certification, and From is not an issuer domain.",
+        "The message pairs a badge or certification with a request to sign in, pay, or claim it, and From is not an issuer domain.",
         "high",
         20,
         "suspicious",
@@ -143,7 +143,8 @@ _PAYMENTS = (
     "pay the",
     "wire transfer",
     "gift card",
-    "usd ",
+    # A bare currency token is not a request to pay. Fee lures still match
+    # "pay the", "verification fee", "paga la", or "tarifa de".
 )
 _CERTS = ("insignia", "badge", "certificacion", "certification", "credencial")
 _RECRUITER = (
@@ -197,7 +198,9 @@ _CORPORATE = (
     "equipo de seguridad",
     "microsoft 365",
 )
-_ACTION = _CREDENTIALS + _PAYMENTS + _CERTS + (
+# A certification word is not itself a call to act. Brand alignment and the
+# badge lure both require a credential, payment, or claim/verify phrase.
+_ACTION = _CREDENTIALS + _PAYMENTS + (
     "reclama",
     "claim your",
     "verifique",
@@ -236,11 +239,15 @@ def pretext_hits(parsed: ParsedEmail) -> list:
             )
         )
     sender = parsed.sender_domain or ""
-    if _any(text, _CERTS) and not _is_issuer(sender, ISSUER_DOMAINS, same_org):
+    if (
+        _any(text, _CERTS)
+        and _any(text, _ACTION)
+        and not _is_issuer(sender, ISSUER_DOMAINS, same_org)
+    ):
         hits.append(
             make_hit(
                 "certification_badge_lure",
-                "A badge or certification is mentioned, and From is not an issuer domain.",
+                "A badge or certification is paired with a sign-in, payment, or claim request, and From is not an issuer domain.",
                 sender or None,
             )
         )
