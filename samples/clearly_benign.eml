@@ -1,0 +1,22 @@
+Return-Path: <alex.rivera@contoso.example>
+From: Alex Rivera <alex.rivera@contoso.example>
+Reply-To: Alex Rivera <alex.rivera@contoso.example>
+To: team@contoso.example
+Subject: Notes from Tuesday's planning meeting
+Date: Tue, 20 Oct 2026 15:00:00 +0000
+Message-ID: <notes-tuesday@contoso.example>
+Received: from mail.contoso.example (mail.contoso.example [192.0.2.10]) by mx.contoso.example with ESMTPS id demo2 for <team@contoso.example>; Tue, 20 Oct 2026 15:00:02 +0000
+Authentication-Results: mx.contoso.example; spf=pass smtp.mailfrom=contoso.example; dkim=pass header.d=contoso.example; dmarc=pass header.from=contoso.example
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+Hi team,
+
+Notes from Tuesday's planning meeting are ready.
+Next session: Thursday at 10:00 in room 3.
+Topics: staffing, handoff, and the quarterly calendar.
+Reference: https://intranet.contoso.example/notes/tuesday
+
+Thanks,
+Alex

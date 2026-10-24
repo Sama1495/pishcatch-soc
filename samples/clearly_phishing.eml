@@ -1,0 +1,43 @@
+Return-Path: <bounce@evil-collect.example>
+From: "PayPal <service@paypal.com>" <billing@paypa1-secure.example>
+Reply-To: support@evil-collect.example
+To: analyst@contoso.example
+Subject: Urgent action required: verify your account
+Date: Tue, 20 Oct 2026 14:00:00 +0000
+Message-ID: <phish-demo-001@evil-collect.example>
+Received: from mail.evil-collect.example (mail.evil-collect.example [198.51.100.20]) by mx.contoso.example with ESMTPS id demo1 for <analyst@contoso.example>; Tue, 20 Oct 2026 14:00:01 +0000
+Received: from laptop.evil-collect.example (unknown [203.0.113.10]) by mail.evil-collect.example with ESMTP id demo0 for <analyst@contoso.example>; Tue, 20 Oct 2026 13:59:50 +0000
+Authentication-Results: mx.contoso.example; spf=fail smtp.mailfrom=evil-collect.example; dkim=fail header.d=paypa1-secure.example; dmarc=fail header.from=paypa1-secure.example
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="phishcatch-boundary"
+
+--phishcatch-boundary
+Content-Type: multipart/alternative; boundary="phishcatch-alt"
+
+--phishcatch-alt
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+Urgent action required. Verify your account or your account will be suspended.
+The display link below is not the destination.
+
+--phishcatch-alt
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+<html><body>
+<p>Urgent action required. Verify your account or your account will be suspended.</p>
+<p><a href="http://paypa1-secure.example/login">https://www.paypal.com/signin</a></p>
+<p><a href="http://203.0.113.50/reset">Review the secure form</a></p>
+</body></html>
+
+--phishcatch-alt--
+
+--phishcatch-boundary
+Content-Type: text/html; name="invoice.html"
+Content-Disposition: attachment; filename="invoice.html"
+Content-Transfer-Encoding: base64
+
+PGh0bWw+PGJvZHk+bm90IGV4ZWN1dGVkPC9ib2R5PjwvaHRtbD4=
+
+--phishcatch-boundary--

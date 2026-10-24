@@ -1,0 +1,2 @@
+This file is not an RFC 5322 message.
+It has no header fields and should be rejected by the parser.

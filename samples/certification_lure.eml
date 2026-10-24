@@ -1,0 +1,52 @@
+Return-Path: <bounce-7731@mailer-blast.test>
+From: "LinkedIn Learning Certificaciones" <certificaciones@linkedin-credenciales.test>
+Reply-To: verificacion.badges@freemail.example
+To: "Daniel Ortiz" <daniel.ortiz@alaris-demo.example>
+Subject: Daniel, se requiere accion: reclama tu insignia AWS Certified Machine Learning antes de 24 horas
+Date: Fri, 23 Oct 2026 09:12:44 -0600
+Message-ID: <cert-lure-demo-001@mailer-blast.test>
+Received: from mta3.mailer-blast.test (mta3.mailer-blast.test [198.51.100.77]) by mx.alaris-demo.example with ESMTPS id lure01 for <daniel.ortiz@alaris-demo.example>; Fri, 23 Oct 2026 15:12:46 +0000
+Received: from unknown (unknown [203.0.113.41]) by mta3.mailer-blast.test with ESMTP id lure00; Fri, 23 Oct 2026 15:12:40 +0000
+Authentication-Results: mx.alaris-demo.example; spf=softfail smtp.mailfrom=mailer-blast.test; dkim=none; dmarc=fail header.from=linkedin-credenciales.test
+X-PhishCatch-Sample: synthetic demo, fictional people and reserved domains only
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="pc-cert-lure"
+
+--pc-cert-lure
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+Hola Daniel,
+
+Vimos tu publicacion en LinkedIn del 14 de octubre donde compartiste tu nueva certificacion
+AWS Certified Machine Learning - Specialty como Arquitecto de IA en Alaris Demo. Felicidades!
+
+Para que tu insignia digital siga apareciendo como verificada en tu perfil, se requiere accion:
+confirme su identidad y reclame su insignia en las proximas 24 horas. Si no lo haces, la
+credencial sera marcada como no verificada y retirada de tu perfil publico.
+
+1. Abre el portal de verificacion: https://www.linkedin.com/learning/certificates/verify
+2. Inicia sesion con tu cuenta corporativa de Microsoft 365 para validar tu empleador.
+3. Paga la tarifa unica de verificacion de USD 49 para emitir el certificado oficial en PDF.
+
+Equipo de Certificaciones y Talento
+LinkedIn Learning
+
+--pc-cert-lure
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+<html><body>
+<p>Hola Daniel,</p>
+<p>Vimos tu publicacion en LinkedIn del 14 de octubre donde compartiste tu nueva certificacion
+<b>AWS Certified Machine Learning - Specialty</b> como Arquitecto de IA en Alaris Demo. Felicidades!</p>
+<p>Para que tu insignia digital siga apareciendo como verificada en tu perfil, <b>se requiere accion</b>:
+confirme su identidad y reclame su insignia en las proximas 24 horas. Si no lo haces, la credencial
+sera marcada como no verificada y retirada de tu perfil publico.</p>
+<p><a href="https://linkedln-badge-verify.test/claim?u=daniel.ortiz&amp;cert=aws-mls">https://www.linkedin.com/learning/certificates/verify</a></p>
+<p>Inicia sesion con tu cuenta corporativa de Microsoft 365 para validar tu empleador y paga la tarifa
+unica de verificacion de USD 49 para emitir el certificado oficial en PDF.</p>
+<p>Equipo de Certificaciones y Talento<br>LinkedIn Learning</p>
+</body></html>
+
+--pc-cert-lure--

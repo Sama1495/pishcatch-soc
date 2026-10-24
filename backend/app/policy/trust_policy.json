@@ -1,0 +1,143 @@
+{
+  "version": "1.0.0",
+  "status": "initial_proposal",
+  "auto_execute": false,
+  "calibration_note": "These thresholds are an initial proposal. Calibrate them with labeled samples and analyst feedback before raising autonomy. Confidence is not a measured accuracy.",
+  "growth": {
+    "track": "Count analyst verdicts (agent was correct / agent was wrong, plus the earlier confirm / correct decisions) for this ruleset version.",
+    "raise_autonomy_only_after": "A reviewed evaluation on labeled samples, then an edited policy file. One correction never changes a threshold, and the running engine never edits this file.",
+    "mvp_limit": "Nothing auto-executes. Every offered action waits for an explicit human yes."
+  },
+  "confidence_formula": {
+    "version": "1.0.0",
+    "weights": {
+      "evidence_agreement": 0.4,
+      "coverage": 0.25,
+      "conflict_clarity": 0.15,
+      "historical_agreement": 0.2
+    },
+    "historical_prior": {
+      "pseudo_count": 4,
+      "rate": 0.5
+    },
+    "label_caps": {
+      "inconclusive": 40,
+      "likely_benign": 70,
+      "suspicious": 100,
+      "likely_malicious": 100
+    },
+    "bands": {
+      "high_min": 75,
+      "medium_min": 40
+    },
+    "coverage_weights": {
+      "local_parser": 25,
+      "deterministic_rules": 30,
+      "local_correlation": 15,
+      "reputation": 20,
+      "ai_explainer": 10
+    },
+    "single_rule_agreement_cap": 55,
+    "two_rule_agreement_cap": 75,
+    "benign_agreement_cap": 80,
+    "benign_agreement_per_signal": 20
+  },
+  "action_labels": {
+    "simulate_quarantine": "Simulate quarantine",
+    "analyst_review": "Keep this case in analyst review",
+    "manual_investigation": "Mark for manual investigation",
+    "close_no_containment": "Close with no containment"
+  },
+  "rules": [
+    {
+      "id": "malicious-high",
+      "risk_label": "likely_malicious",
+      "confidence_band": "high",
+      "autonomy": "approve_recommended_action",
+      "offered_action": "simulate_quarantine",
+      "requires_human_approval": true,
+      "summary": "High confidence and a likely_malicious label. Recommend simulated quarantine. A human must click Yes before the simulation is recorded."
+    },
+    {
+      "id": "malicious-medium",
+      "risk_label": "likely_malicious",
+      "confidence_band": "medium",
+      "autonomy": "analyst_review",
+      "offered_action": "analyst_review",
+      "requires_human_approval": true,
+      "summary": "The malicious label is only medium confidence. An analyst reviews the case before any containment recommendation is accepted."
+    },
+    {
+      "id": "malicious-low",
+      "risk_label": "likely_malicious",
+      "confidence_band": "low",
+      "autonomy": "manual_investigation",
+      "offered_action": "manual_investigation",
+      "requires_human_approval": true,
+      "summary": "The malicious label is low confidence. Investigate manually. No containment action is offered."
+    },
+    {
+      "id": "suspicious-high",
+      "risk_label": "suspicious",
+      "confidence_band": "high",
+      "autonomy": "analyst_review",
+      "offered_action": "analyst_review",
+      "requires_human_approval": true,
+      "summary": "Suspicious mail stays with an analyst even when confidence is high. Quarantine is not offered for this label."
+    },
+    {
+      "id": "suspicious-medium",
+      "risk_label": "suspicious",
+      "confidence_band": "medium",
+      "autonomy": "analyst_review",
+      "offered_action": "analyst_review",
+      "requires_human_approval": true,
+      "summary": "Medium confidence and a suspicious label. Analyst review is required."
+    },
+    {
+      "id": "suspicious-low",
+      "risk_label": "suspicious",
+      "confidence_band": "low",
+      "autonomy": "manual_investigation",
+      "offered_action": "manual_investigation",
+      "requires_human_approval": true,
+      "summary": "Low confidence. Investigate manually instead of accepting a containment recommendation."
+    },
+    {
+      "id": "benign-high",
+      "risk_label": "likely_benign",
+      "confidence_band": "high",
+      "autonomy": "analyst_review",
+      "offered_action": "close_no_containment",
+      "requires_human_approval": true,
+      "summary": "Aligning signals support likely_benign. A human may close the case with no containment. The engine does not auto-close it."
+    },
+    {
+      "id": "benign-medium",
+      "risk_label": "likely_benign",
+      "confidence_band": "medium",
+      "autonomy": "analyst_review",
+      "offered_action": "close_no_containment",
+      "requires_human_approval": true,
+      "summary": "likely_benign is capped so it does not read as certainty. Closing still requires a human yes."
+    },
+    {
+      "id": "benign-low",
+      "risk_label": "likely_benign",
+      "confidence_band": "low",
+      "autonomy": "manual_investigation",
+      "offered_action": "manual_investigation",
+      "requires_human_approval": true,
+      "summary": "The benign label is low confidence. Investigate manually. Do not treat the label as a clearance."
+    },
+    {
+      "id": "inconclusive-any",
+      "risk_label": "inconclusive",
+      "confidence_band": "*",
+      "autonomy": "manual_investigation",
+      "offered_action": "manual_investigation",
+      "requires_human_approval": true,
+      "summary": "The engine did not reach a firm verdict. Investigate manually. This is not a benign clearance."
+    }
+  ]
+}

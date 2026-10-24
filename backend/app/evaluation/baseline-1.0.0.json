@@ -1,0 +1,101 @@
+{
+  "generated_at": "2026-10-24T18:08:28+00:00",
+  "ruleset": "1.0.0",
+  "selection": "First 200 messages in mailbox order from nazario-phishing-2023; first 200 easy_ham files and first 100 hard_ham files by sorted path. Not a random sample and not tuned after looking at errors.",
+  "datasets": [
+    {
+      "name": "Jose Nazario phishing corpus",
+      "file": "phishing-2023",
+      "url": "https://monkey.org/~jose/phishing/phishing-2023",
+      "license": "CC-BY-4.0",
+      "role": "phishing",
+      "attempted": 200
+    },
+    {
+      "name": "SpamAssassin public corpus easy_ham",
+      "file": "20030228_easy_ham.tar.bz2",
+      "url": "https://spamassassin.apache.org/old/publiccorpus/20030228_easy_ham.tar.bz2",
+      "license": "Public corpus. Copyright in the messages remains with the senders.",
+      "role": "ham",
+      "attempted": 200
+    },
+    {
+      "name": "SpamAssassin public corpus hard_ham",
+      "file": "20030228_hard_ham.tar.bz2",
+      "url": "https://spamassassin.apache.org/old/publiccorpus/20030228_hard_ham.tar.bz2",
+      "license": "Public corpus. Copyright in the messages remains with the senders.",
+      "role": "ham",
+      "attempted": 100
+    }
+  ],
+  "positive_prediction": [
+    "likely_malicious",
+    "suspicious"
+  ],
+  "rates": {
+    "tp": 153,
+    "fp": 206,
+    "fn": 29,
+    "tn": 0,
+    "phishing_inconclusive": 18,
+    "ham_inconclusive": 94,
+    "tpr": 0.765,
+    "fnr": 0.145,
+    "fpr": 0.6866666666666666,
+    "tnr": 0.0,
+    "inconclusive_rate_phishing": 0.09,
+    "inconclusive_rate_ham": 0.31333333333333335,
+    "phishing_scored": 200,
+    "phishing_attempted": 200,
+    "ham_scored": 300,
+    "ham_attempted": 300
+  },
+  "failures_handled": 0,
+  "latency_ms": {
+    "p50": 2.974,
+    "p95": 14.639,
+    "n": 500
+  },
+  "slices": {
+    "phishing": {
+      "kind": "nazario-phishing-2023",
+      "attempted": 200,
+      "scored": 200,
+      "failures": 0,
+      "failure_codes": {},
+      "labels": {
+        "likely_malicious": 10,
+        "suspicious": 143,
+        "likely_benign": 29,
+        "inconclusive": 18
+      }
+    },
+    "easy_ham": {
+      "kind": "spamassassin-easy-ham-20030228",
+      "attempted": 200,
+      "scored": 200,
+      "failures": 0,
+      "failure_codes": {},
+      "labels": {
+        "likely_malicious": 0,
+        "suspicious": 174,
+        "likely_benign": 0,
+        "inconclusive": 26
+      }
+    },
+    "hard_ham": {
+      "kind": "spamassassin-hard-ham-20030228",
+      "attempted": 100,
+      "scored": 100,
+      "failures": 0,
+      "failure_codes": {},
+      "labels": {
+        "likely_malicious": 2,
+        "suspicious": 30,
+        "likely_benign": 0,
+        "inconclusive": 68
+      }
+    }
+  },
+  "note": "Rates use scored messages only. Inconclusive is not treated as benign and is not a true positive. No URL inside a message was fetched."
+}
