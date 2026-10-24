@@ -36,7 +36,7 @@ request limits, and a data review.
 | Sensitive logs | Log lines carry ids, labels, counts, and statuses. A filter redacts emails, URLs, and `key=value` secrets, and truncates long lines. |
 | Prompt injection in the mail | The explainer stub does not receive the body. A future prompt must treat the mail as data. Model JSON with extra fields or unknown rule ids is discarded. |
 | Model sets the verdict | The risk label is computed before the explainer runs and is not replaced by it. |
-| Real response actions | Quarantine only writes `quarantine_simulated` and an audit event. There is no mail client. |
+| Real response actions | Quarantine only writes `quarantine_simulated` when the stored policy offered `simulate_quarantine`, and the request is audited. Any other quarantine request returns `action_not_authorized` and writes `action_denied`. There is no mail client. |
 | One correction retrains production rules | Decisions store `rules_updated: false`. The next upload is scored by the same ruleset. |
 | Error oracles | Failures use one JSON shape: `error.code`, `error.message`, `error.details`. Messages do not echo file contents or tracebacks. |
 | Clicking an indicator in a future UI | API URL fields include a defanged `display_value` (`hxxp`, `[.]`). |

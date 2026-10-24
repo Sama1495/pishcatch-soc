@@ -1,0 +1,19 @@
+From: Audit Bot <audit-bot@example>
+To: soc@example
+Subject: SYNTHETIC risky attachment name
+Date: Sat, 24 Oct 2026 12:20:00 +0000
+Message-ID: <synthetic-risky-name@example>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="synthetic-audit-boundary"
+
+--synthetic-audit-boundary
+Content-Type: text/plain; charset="utf-8"
+
+SYNTHETIC fixture. The next part is harmless text with a misleading filename.
+--synthetic-audit-boundary
+Content-Type: application/octet-stream; name="invoice.pdf.exe"
+Content-Disposition: attachment; filename="invoice.pdf.exe"
+Content-Transfer-Encoding: 8bit
+
+SYNTHETIC harmless text. Not an executable.
+--synthetic-audit-boundary--

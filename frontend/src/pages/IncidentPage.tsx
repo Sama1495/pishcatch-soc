@@ -248,7 +248,7 @@ export function IncidentPage() {
               <BandBadge band={detail.confidence.band} />
               <p className="score">
                 {detail.confidence.score}
-                <span>%</span>
+                <span> index</span>
               </p>
             </div>
             <p className="caveat">{detail.caveat}</p>

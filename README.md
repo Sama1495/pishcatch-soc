@@ -57,6 +57,7 @@ Tagline: Catch the threat. Explain the risk. Guide the response.
 
 Live reputation and a live model stay off. See `docs/architecture.md`,
 `docs/trust-policy.md`, `docs/threat-model.md`, and `docs/demo-plan.md`.
+The Alaris readiness audit is in Spanish at `docs/alaris-readiness-audit.md`.
 
 ## Repository layout
 
@@ -185,7 +186,7 @@ Other fixtures:
 | --- | --- |
 | `samples/clearly_phishing.eml` | `likely_malicious` |
 | `samples/ambiguous.eml` | `suspicious` |
-| `samples/clearly_benign.eml` | `likely_benign` (with a caveat, not a clearance) |
+| `samples/clearly_benign.eml` | `inconclusive` while `PHISHCATCH_TRUSTED_AUTHSERV_IDS` is empty. `likely_benign` only if that authserv is trusted, and still with a caveat, not a clearance |
 | `samples/no_signals.eml` | `inconclusive` (not safe) |
 | `samples/malformed.eml` | HTTP 400 `invalid_content` |
 | `samples/empty.eml` | HTTP 400 `empty_file` |
@@ -200,11 +201,11 @@ Samples are fictional and use `.example` domains. See `samples/README.md`.
 | `POST` | `/api/v1/incidents` | Multipart field `file`. Analyzes a `.eml` and stores the case. |
 | `GET` | `/api/v1/incidents` | Queue, ordered by risk rank × confidence. Optional `risk_label`, `case_status`, `confidence_band`, `limit`, `offset`. No body text. |
 | `GET` | `/api/v1/incidents/{id}` | Case file, confidence, policy, timeline, brief, decisions, audit. |
-| `GET` | `/api/v1/metrics` | Agreement tally, cases by agent label, average latency. Not a measured accuracy. |
+| `GET` | `/api/v1/metrics` | Agreement tally, cases by agent label, average analysis time, and average human-review wall time when a decision closed the wait. Not a measured accuracy and not a time-saved claim. |
 | `POST` | `/api/v1/incidents/{id}/decisions` | JSON `action` of `confirm` or `correct`, plus `reason`. `correct` also needs `corrected_label`. |
 | `POST` | `/api/v1/incidents/{id}/feedback` | `verdict` of `correct` or `wrong`, plus `reason`. Does not change rules. |
 | `POST` | `/api/v1/incidents/{id}/actions/response` | `decision` of `approve` or `reject` for the action the policy offered. |
-| `POST` | `/api/v1/incidents/{id}/actions/quarantine` | Simulated only. Body: `analyst_id`, `reason`. |
+| `POST` | `/api/v1/incidents/{id}/actions/quarantine` | Simulated only, and only when the policy offered quarantine. A refusal is audited as `action_denied`. Body: `analyst_id`, `reason`. |
 
 Errors always look like:
 

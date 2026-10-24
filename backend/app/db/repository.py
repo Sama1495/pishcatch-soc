@@ -3,7 +3,14 @@
 from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session, selectinload
 
-from app.db.models import ActionResponseRow, DecisionRow, Incident, IndicatorRow, VerdictFeedbackRow
+from app.db.models import (
+    ActionResponseRow,
+    DecisionRow,
+    Incident,
+    IndicatorRow,
+    OperationStepRow,
+    VerdictFeedbackRow,
+)
 
 CORRELATABLE = {"url", "domain", "ip", "email"}
 
@@ -116,6 +123,22 @@ def metrics_snapshot(session: Session, ruleset: str) -> dict:
     case_count = session.scalar(select(func.count()).select_from(Incident)) or 0
     average = session.scalar(select(func.avg(Incident.processing_time_ms)))
     raw_rate = (agreements / total_feedback) if total_feedback else None
+    # Wall clock from analysis completion to the decision that closed the wait.
+    # Includes queue time. Null until at least one such decision exists.
+    review_count = session.scalar(
+        select(func.count())
+        .select_from(OperationStepRow)
+        .where(
+            OperationStepRow.step_id == "awaiting_human_decision",
+            OperationStepRow.status == "done",
+        )
+    ) or 0
+    review_average = session.scalar(
+        select(func.avg(OperationStepRow.duration_ms)).where(
+            OperationStepRow.step_id == "awaiting_human_decision",
+            OperationStepRow.status == "done",
+        )
+    )
     return {
         "case_count": int(case_count),
         "cases_by_label": {label: int(counts.get(label, 0)) for label in (
@@ -125,6 +148,10 @@ def metrics_snapshot(session: Session, ruleset: str) -> dict:
             "inconclusive",
         )},
         "average_processing_time_ms": None if average is None or case_count == 0 else round(float(average), 1),
+        "completed_human_reviews": int(review_count),
+        "average_human_review_ms": (
+            None if review_count == 0 or review_average is None else round(float(review_average), 1)
+        ),
         "agreements": agreements,
         "disagreements": disagreements,
         "feedback_total": total_feedback,

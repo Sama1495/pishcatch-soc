@@ -11,7 +11,7 @@ export function RiskBadge({ label }: { label: RiskLabel }) {
 }
 
 export function BandBadge({ band }: { band: ConfidenceBand }) {
-  return <span className={`badge band-${band}`}>{band} confidence</span>;
+  return <span className={`badge band-${band}`}>{band} confidence index</span>;
 }
 
 function RiskIcon({ label }: { label: RiskLabel }) {

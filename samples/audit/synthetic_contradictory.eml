@@ -1,0 +1,15 @@
+From: Notes <notes@example>
+Reply-To: Notes <notes@example>
+To: soc@example
+Subject: SYNTHETIC contradictory fixture
+Date: Sat, 24 Oct 2026 12:05:00 +0000
+Message-ID: <synthetic-contradictory@example>
+Authentication-Results: mx.example; spf=pass smtp.mailfrom=example; dkim=pass header.d=example; dmarc=pass header.from=example
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+SYNTHETIC fixture. Not a real message.
+
+We never charge a fee and we will not ask for your password.
+The notes are here: https://bit.ly/synthetic-audit-note

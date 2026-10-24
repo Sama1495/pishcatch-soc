@@ -131,7 +131,7 @@ def test_punycode_and_dangerous_scheme_and_credentials():
             NormalizedUrl(
                 original="javascript:alert(1)",
                 normalized="javascript:alert(1)",
-                defanged="javascript:alert(1)",
+                defanged="javascript[colon]alert(1)",
                 scheme="javascript",
                 host=None,
                 is_ip_literal=False,
